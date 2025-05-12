@@ -18,7 +18,7 @@ except Exception as e:
     st.error(f"Error al cargar el archivo: {e}")
     df = pd.DataFrame()
 
-st.title("ðŸ’§ CÃ¡lculo de Consumo de Agua en Cultivos")
+st.title("Calculo de consumo de agua en cultivos")
 
 cultivos_permanentes = ['Viñedo', 'Cítricos', 'Aguacate', 'Mango', 'Olivo', 'Platanera']
 cultivos_no_permanentes = ['Tomate', 'Papaya', 'Papa', 'Pimiento', 'Calabací­n', 'Otras hortalizas']
