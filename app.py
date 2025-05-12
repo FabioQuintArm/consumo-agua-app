@@ -12,12 +12,17 @@ csv_path = os.path.join(base_path, 'Dataset.csv')
 
 # --- Cargar CSV sin caché y con codificación robusta ---
 try:
-    df = pd.read_csv(csv_path, sep=';', decimal=',', encoding='utf-8', errors='replace')
+    df = pd.read_csv(csv_path, sep=';', decimal=',', encoding='utf-8')
+    df.columns = df.columns.str.strip().str.lower()  # Limpieza de nombres de columnas
 except Exception as e:
     import streamlit as st
     st.error(f"Error al cargar el archivo: {e}")
     df = pd.DataFrame()
+
 st.write("Columnas disponibles:", df.columns.tolist())
+
+st.title("Cálculo de consumo de agua en cultivos")
+
 
 st.title("Calculo de consumo de agua en cultivos")
 
