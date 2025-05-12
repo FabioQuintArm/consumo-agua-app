@@ -30,6 +30,20 @@ cultivos_no_permanentes = ['Tomate', 'Papaya', 'Papa', 'Pimiento', 'Calabací­n
 
 months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
           'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+month_columns = {
+    'Enero': 'ETo01',
+    'Febrero': 'ETo02',
+    'Marzo': 'ETo03',
+    'Abril': 'ETo04',
+    'Mayo': 'ETo05',
+    'Junio': 'ETo06',
+    'Julio': 'ETo07',
+    'Agosto': 'ETo08',
+    'Septiembre': 'ETo09',
+    'Octubre': 'ETo10',
+    'Noviembre': 'ETo11',
+    'Diciembre': 'ETo12'
+}
 
 cultivos_kc = {
     'Viñedo':     dict.fromkeys(months, 0.3) | {'Marzo': 0.5, 'Abril': 0.7, 'Mayo': 0.75, 'Junio': 0.75, 'Julio': 0.75, 'Agosto': 0.7, 'Septiembre': 0.5, 'Octubre': 0.4},
@@ -114,21 +128,23 @@ if st.button("Calcular consumo"):
                     fase_kc[mes] = 0.8
                 else:
                     fase_kc[mes] = 1.05
-
+        
         # Cálculo del consumo mensual
         resumen = []
         total = 0
+    
+  consumo_total = 0
 
-        for mes in selected_months:
-            try:
-                eto_raw = parcela_data.iloc[0][month_columns[mes]]
-                eto = float(str(eto_raw).replace(',', '.'))
-                kc = fase_kc[mes]
-                consumo = eto * kc * superficie / 1000
-                resumen.append([mes, round(eto, 2), round(kc, 2), round(consumo, 2)])
-                total += consumo
-            except Exception as e:
-                st.warning(f"No se pudo calcular para {mes}: {e}")
+    for mes in nombres_meses[mes_inicio - 1: mes_fin]:
+    columna = month_columns[mes]
+        try:
+            eto = float(parcela_data[columna].values[0])
+            consumo_mes = eto * kc * superficie / 1000
+            consumo_total += consumo_mes
+            st.write(f"{mes}: {consumo_mes:.2f} m³")
+        except Exception as e:
+            st.warning(f"No se pudo calcular para {mes}: {e}")
+
 
         # Mostrar resultados
         st.subheader("ðŸ“Š Resumen del consumo mensual")
