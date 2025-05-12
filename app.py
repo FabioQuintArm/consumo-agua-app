@@ -72,6 +72,19 @@ st.write("Polígono:", poligono)
 st.write("Parcela:", parcela)
 st.write("Recinto:", recinto)
 
+coincidencias_parcela = df[
+    (df['provincia'].astype(str).str.strip().str.lower() == str(provincia).strip().lower()) &
+    (df['municipio'].astype(str).str.strip().str.lower() == str(municipio).strip().lower()) &
+    (df['poligono'].astype(str).str.strip() == str(poligono).strip()) &
+    (df['parcela'].astype(str).str.strip() == str(parcela).strip()) &
+    (df['recinto'].astype(str).str.strip() == str(recinto).strip())
+]
+
+st.subheader("🔎 Coincidencias con filtro completo (nivel parcela)")
+st.write("Cantidad de coincidencias:", len(coincidencias_parcela))
+st.write(coincidencias_parcela.head())
+
+
 # --- Cálculo al presionar el botón ---
 if st.button("Calcular consumo"):
     parcela_data = df[
