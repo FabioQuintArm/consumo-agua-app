@@ -28,6 +28,18 @@ with col2:
 
 cultivo_tipo = st.selectbox("Tipo de cultivo", ["Permanente", "No permanente"])
 
+months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+          'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+kc_permanentes = {
+    'Viñedo': dict.fromkeys(months, 0.3) | {'Marzo': 0.5, 'Abril': 0.7, 'Mayo': 0.75, 'Junio': 0.75, 'Julio': 0.75, 'Agosto': 0.7, 'Septiembre': 0.5, 'Octubre': 0.4},
+    'Cítricos': dict.fromkeys(months, 0.7) | {'Enero': 0.65, 'Febrero': 0.65, 'Noviembre': 0.65, 'Diciembre': 0.65},
+    'Aguacate': dict.fromkeys(months, 0.7) | {'Marzo': 0.75, 'Abril': 0.8, 'Mayo': 0.8, 'Junio': 0.8, 'Julio': 0.75, 'Agosto': 0.75},
+    'Mango': dict.fromkeys(months, 0.5) | {'Marzo': 0.6, 'Abril': 0.65, 'Mayo': 0.7, 'Junio': 0.7, 'Julio': 0.7, 'Agosto': 0.65, 'Septiembre': 0.6, 'Octubre': 0.55},
+    'Olivo': dict.fromkeys(months, 0.3) | {'Marzo': 0.4, 'Abril': 0.5, 'Mayo': 0.55, 'Junio': 0.6, 'Julio': 0.55, 'Agosto': 0.5, 'Septiembre': 0.4, 'Octubre': 0.35},
+    'Platanera': dict.fromkeys(months, 1.05) | {'Marzo': 1.1, 'Abril': 1.1, 'Mayo': 1.15, 'Junio': 1.15, 'Julio': 1.2, 'Agosto': 1.2, 'Septiembre': 1.15, 'Octubre': 1.1}
+}
+
+
 # Columnas de ETo
 month_columns = {
     'Enero': 'eto01', 'Febrero': 'eto02', 'Marzo': 'eto03', 'Abril': 'eto04',
@@ -65,18 +77,18 @@ if st.button("Calcular consumo"):
     if parcela_data.empty:
         st.error("Parcela no encontrada en el dataset.")
     else:
-        mes_a_num = {mes: i+1 for i, mes in enumerate(month_names)}
+        mes_a_num = {mes: i+1 for i, mes in enumerate(months)}
 
         if cultivo_tipo == "Permanente":
-            selected_months = month_names
-            fase_kc = {mes: cultivos_kc[cultivo] for mes in month_names}
+            selected_months = months
+            fase_kc = kc_permanentes.get(cultivo, dict.fromkeys(months, 0.6))
         else:
-            idx_ini = month_names.index(mes_inicio)
-            idx_fin = month_names.index(mes_fin)
+            idx_ini = months.index(mes_inicio)
+            idx_fin = months.index(mes_fin)
             if idx_ini <= idx_fin:
-                selected_months = month_names[idx_ini:idx_fin+1]
+                selected_months = months[idx_ini:idx_fin+1]
             else:
-                selected_months = month_names[idx_ini:] + month_names[:idx_fin+1]
+                selected_months = months[idx_ini:] + months[:idx_fin+1]
 
             fase_kc = {}
             for i, mes in enumerate(selected_months):
@@ -107,4 +119,6 @@ if st.button("Calcular consumo"):
         st.subheader("📊 Resumen del consumo mensual")
         st.dataframe(pd.DataFrame(resumen, columns=["Mes", "ETo (mm)", "Kc", "Consumo (m³)"]))
         st.success(f"💧 Consumo total: {consumo_total:.2f} m³")
+
+
 
