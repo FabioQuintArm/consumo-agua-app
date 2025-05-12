@@ -3,7 +3,7 @@ import streamlit as st
 from pathlib import Path
 
 # Cargar CSV
-csv_path = Path(__file__).parent / "Dataset.csv"
+csv_path = Path(__file__).parent / "dataset.csv"
 
 try:
     df = pd.read_csv(csv_path, sep=';', decimal=',', encoding='utf-8')
