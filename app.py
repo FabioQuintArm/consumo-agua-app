@@ -135,7 +135,7 @@ if st.button("Calcular consumo"):
         
     if not parcela_data.empty:
         consumo_total = 0
-        for mes in month_names[mes_inicio - 1:mes_fin]:
+        for mes in months[mes_inicio - 1:mes_fin]:
             columna = month_columns[mes]
             try:
                 eto = float(parcela_data[columna].values[0])
