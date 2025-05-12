@@ -1,6 +1,7 @@
 import pandas as pd
 import os
 import sys
+import streamlit as st
 
 # --- Detectar la ruta del archivo CSV dentro del .exe o local ---
 if hasattr(sys, '_MEIPASS'):
@@ -15,7 +16,6 @@ try:
     df = pd.read_csv(csv_path, sep=';', decimal=',', encoding='utf-8')
     df.columns = df.columns.str.strip().str.lower()  # Limpieza de nombres de columnas
 except Exception as e:
-    import streamlit as st
     st.error(f"Error al cargar el archivo: {e}")
     df = pd.DataFrame()
     
