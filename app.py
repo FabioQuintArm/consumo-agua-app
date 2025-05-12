@@ -18,13 +18,10 @@ except Exception as e:
     st.error(f"Error al cargar el archivo: {e}")
     df = pd.DataFrame()
 
-# AquÃ­ continÃºa tu cÃ³digo normalmente:
-# tÃ­tulos, formularios, cÃ¡lculos, etc.
 st.title("ðŸ’§ CÃ¡lculo de Consumo de Agua en Cultivos")
 
-# --- ConfiguraciÃ³n de datos de cultivo ---
-cultivos_permanentes = ['ViÃ±edo', 'CÃ­tricos', 'Aguacate', 'Mango', 'Olivo', 'Platanera']
-cultivos_no_permanentes = ['Tomate', 'Papaya', 'Papa', 'Pimiento', 'CalabacÃ­n', 'Otras hortalizas']
+cultivos_permanentes = ['Viñedo', 'Cítricos', 'Aguacate', 'Mango', 'Olivo', 'Platanera']
+cultivos_no_permanentes = ['Tomate', 'Papaya', 'Papa', 'Pimiento', 'Calabací­n', 'Otras hortalizas']
 
 months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
           'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
@@ -61,9 +58,9 @@ if cultivo_tipo == "Permanente":
 else:
     cultivo = st.selectbox("Selecciona el cultivo", cultivos_no_permanentes)
     mes_inicio = st.selectbox("Mes de inicio", months)
-    mes_fin = st.selectbox("Mes de finalizaciÃ³n", months)
+    mes_fin = st.selectbox("Mes de finalización", months)
 
-# --- CÃ¡lculo al presionar el botÃ³n ---
+# --- Cálculo al presionar el botón ---
 if st.button("Calcular consumo"):
     parcela_data = df[
         (df['provincia'] == provincia) &
@@ -100,7 +97,7 @@ if st.button("Calcular consumo"):
                 else:
                     fase_kc[mes] = 1.05
 
-        # CÃ¡lculo del consumo mensual
+        # Cálculo del consumo mensual
         resumen = []
         total = 0
 
