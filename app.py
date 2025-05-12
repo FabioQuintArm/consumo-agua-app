@@ -8,7 +8,7 @@ if hasattr(sys, '_MEIPASS'):
 else:
     base_path = os.path.abspath(".")
 
-csv_path = os.path.join(base_path, 'Dataset.csv')
+csv_path = os.path.join(base_path, 'dataset.csv')
 
 # --- Cargar CSV sin caché y con codificación robusta ---
 try:
