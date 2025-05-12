@@ -1,107 +1,62 @@
 import pandas as pd
-import os
-import sys
 import streamlit as st
+from pathlib import Path
 
-# --- Detectar la ruta del archivo CSV dentro del .exe o local ---
-if hasattr(sys, '_MEIPASS'):
-    base_path = sys._MEIPASS
-else:
-    base_path = os.path.abspath(".")
+# Cargar CSV
+csv_path = Path(__file__).parent / "Dataset.csv"
 
-csv_path = os.path.join(base_path, 'dataset.csv')
-
-# --- Cargar CSV sin caché y con codificación robusta ---
 try:
     df = pd.read_csv(csv_path, sep=';', decimal=',', encoding='utf-8')
-    df.columns = df.columns.str.strip().str.lower()  # Limpieza de nombres de columnas
+    df.columns = df.columns.str.strip().str.lower()
 except Exception as e:
     st.error(f"Error al cargar el archivo: {e}")
     df = pd.DataFrame()
 
-st.subheader("📋 Primeras filas del dataset")
-st.write(df.head())
-st.write("Columnas detectadas:", df.columns.tolist())
+st.title("Cálculo de Consumo de Agua en Cultivos")
 
-st.title("Calculo de consumo de agua en cultivos")
-
-cultivos_permanentes = ['Viñedo', 'Cítricos', 'Aguacate', 'Mango', 'Olivo', 'Platanera']
-cultivos_no_permanentes = ['Tomate', 'Papaya', 'Papa', 'Pimiento', 'Calabací­n', 'Otras hortalizas']
-
-month_names = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-               'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
-mes_a_num = {mes: i+1 for i, mes in enumerate(month_names)}
-
-month_columns = {
-    'Enero': 'ETo01',
-    'Febrero': 'ETo02',
-    'Marzo': 'ETo03',
-    'Abril': 'ETo04',
-    'Mayo': 'ETo05',
-    'Junio': 'ETo06',
-    'Julio': 'ETo07',
-    'Agosto': 'ETo08',
-    'Septiembre': 'ETo09',
-    'Octubre': 'ETo10',
-    'Noviembre': 'ETo11',
-    'Diciembre': 'ETo12'
-}
-
-cultivos_kc = {
-    'Viñedo':     dict.fromkeys(months, 0.3) | {'Marzo': 0.5, 'Abril': 0.7, 'Mayo': 0.75, 'Junio': 0.75, 'Julio': 0.75, 'Agosto': 0.7, 'Septiembre': 0.5, 'Octubre': 0.4},
-    'Cí­tricos':   dict.fromkeys(months, 0.7) | {'Enero': 0.65, 'Febrero': 0.65, 'Noviembre': 0.65, 'Diciembre': 0.65},
-    'Aguacate':   dict.fromkeys(months, 0.7) | {'Marzo': 0.75, 'Abril': 0.8, 'Mayo': 0.8, 'Junio': 0.8, 'Julio': 0.75, 'Agosto': 0.75},
-    'Mango':      dict.fromkeys(months, 0.5) | {'Marzo': 0.6, 'Abril': 0.65, 'Mayo': 0.7, 'Junio': 0.7, 'Julio': 0.7, 'Agosto': 0.65, 'Septiembre': 0.6, 'Octubre': 0.55},
-    'Olivo':      dict.fromkeys(months, 0.3) | {'Marzo': 0.4, 'Abril': 0.5, 'Mayo': 0.55, 'Junio': 0.6, 'Julio': 0.55, 'Agosto': 0.5, 'Septiembre': 0.4, 'Octubre': 0.35},
-    'Platanera':  dict.fromkeys(months, 1.05) | {'Marzo': 1.1, 'Abril': 1.1, 'Mayo': 1.15, 'Junio': 1.15, 'Julio': 1.2, 'Agosto': 1.2, 'Septiembre': 1.15, 'Octubre': 1.1},
-}
-
+# Entradas
+st.header("📋 Formulario de entrada")
 col1, col2 = st.columns(2)
-provincia = col1.text_input("provincia")
-municipio = col2.text_input("municipio")
-poligono = col1.text_input("poli­gono")
-parcela = col2.text_input("parcela")
-recinto = col1.text_input("recinto")
-superficie = col2.number_input("Superficie cultivada (m²)", min_value=1.0)
+with col1:
+    provincia = st.text_input("Provincia")
+    municipio = st.text_input("Municipio")
+    poligono = st.text_input("Polígono")
+with col2:
+    parcela = st.text_input("Parcela")
+    recinto = st.text_input("Recinto")
+    superficie = st.number_input("Superficie (m²)", min_value=0.0, step=0.1)
 
-cultivo_tipo = st.radio("Tipo de cultivo", ["Permanente", "No permanente"])
-if cultivo_tipo == "Permanente":
-    cultivo = st.selectbox("Selecciona el cultivo", cultivos_permanentes)
+cultivo_tipo = st.selectbox("Tipo de cultivo", ["Permanente", "No permanente"])
+
+# Columnas de ETo
+month_columns = {
+    'Enero': 'eto01', 'Febrero': 'eto02', 'Marzo': 'eto03', 'Abril': 'eto04',
+    'Mayo': 'eto05', 'Junio': 'eto06', 'Julio': 'eto07', 'Agosto': 'eto08',
+    'Septiembre': 'eto09', 'Octubre': 'eto10', 'Noviembre': 'eto11', 'Diciembre': 'eto12'
+}
+month_names = list(month_columns.keys())
+
+if cultivo_tipo == "No permanente":
+    mes_inicio = st.selectbox("Mes de inicio", month_names)
+    mes_fin = st.selectbox("Mes de fin", month_names)
+else:
     mes_inicio = None
     mes_fin = None
-else:
-    cultivo = st.selectbox("Selecciona el cultivo", cultivos_no_permanentes)
-    mes_inicio = st.selectbox("Mes de inicio", months)
-    mes_fin = st.selectbox("Mes de finalización", months)
 
-st.subheader("🔍 Valores ingresados")
-st.write("Provincia:", provincia)
-st.write("Municipio:", municipio)
-st.write("Polígono:", poligono)
-st.write("Parcela:", parcela)
-st.write("Recinto:", recinto)
+# Kc base por cultivo permanente
+cultivos_kc = {
+    'Viñedo': 0.7, 'Cítricos': 0.65, 'Aguacate': 0.6,
+    'Mango': 0.6, 'Olivo': 0.55, 'Platanera': 0.75
+}
 
-mes_inicio = st.selectbox("Mes de inicio", month_names)
-mes_fin = st.selectbox("Mes de fin", month_names)
+cultivo = st.selectbox("Cultivo", list(cultivos_kc.keys()) if cultivo_tipo == "Permanente"
+                       else ['Tomate', 'Papaya', 'Papa', 'Pimiento', 'Calabacín', 'Otras hortalizas'])
 
-coincidencias_parcela = df[
-    (df['provincia'].astype(str).str.strip().str.lower() == str(provincia).strip().lower()) &
-    (df['municipio'].astype(str).str.strip().str.lower() == str(municipio).strip().lower()) &
-    (df['poligono'].astype(str).str.strip() == str(poligono).strip()) &
-    (df['parcela'].astype(str).str.strip() == str(parcela).strip()) &
-    (df['recinto'].astype(str).str.strip() == str(recinto).strip())
-]
-
-st.subheader("🔎 Coincidencias con filtro completo (nivel parcela)")
-st.write("Cantidad de coincidencias:", len(coincidencias_parcela))
-st.write(coincidencias_parcela.head())
-
-
-# --- Cálculo al presionar el botón ---
+# Botón
 if st.button("Calcular consumo"):
     parcela_data = df[
-        (df['provincia'].astype(str).str.strip().str.lower() == str(provincia).strip().lower()) &
-        (df['municipio'].astype(str).str.strip().str.lower() == str(municipio).strip().lower()) &
+        (df['provincia'].astype(str).str.strip().str.lower() == provincia.strip().lower()) &
+        (df['municipio'].astype(str).str.strip().str.lower() == municipio.strip().lower()) &
         (df['poligono'].astype(str).str.strip() == str(poligono).strip()) &
         (df['parcela'].astype(str).str.strip() == str(parcela).strip()) &
         (df['recinto'].astype(str).str.strip() == str(recinto).strip())
@@ -110,19 +65,19 @@ if st.button("Calcular consumo"):
     if parcela_data.empty:
         st.error("Parcela no encontrada en el dataset.")
     else:
-        # Definir meses segÃºn tipo de cultivo
-        if cultivo_tipo == "Permanente":
-            selected_months = months
-            fase_kc = cultivos_kc[cultivo]
-        else:
-            idx_ini = months.index(mes_inicio)
-            idx_fin = months.index(mes_fin)
-            if idx_ini <= idx_fin:
-                selected_months = months[idx_ini:idx_fin+1]
-            else:
-                selected_months = months[idx_ini:] + months[:idx_fin+1]
+        mes_a_num = {mes: i+1 for i, mes in enumerate(month_names)}
 
-            # Kc por fase
+        if cultivo_tipo == "Permanente":
+            selected_months = month_names
+            fase_kc = {mes: cultivos_kc[cultivo] for mes in month_names}
+        else:
+            idx_ini = month_names.index(mes_inicio)
+            idx_fin = month_names.index(mes_fin)
+            if idx_ini <= idx_fin:
+                selected_months = month_names[idx_ini:idx_fin+1]
+            else:
+                selected_months = month_names[idx_ini:] + month_names[:idx_fin+1]
+
             fase_kc = {}
             for i, mes in enumerate(selected_months):
                 if i == 0:
@@ -133,24 +88,23 @@ if st.button("Calcular consumo"):
                     fase_kc[mes] = 0.8
                 else:
                     fase_kc[mes] = 1.05
-        
-        # Cálculo del consumo mensual
+
+        consumo_total = 0.0
         resumen = []
-        total = 0
-        
-    if not parcela_data.empty:
-        consumo_total = 0
-        for mes in months[mes_inicio - 1:mes_fin]:
+
+        for mes in selected_months:
             columna = month_columns[mes]
             try:
                 eto = float(parcela_data[columna].values[0])
+                kc = fase_kc[mes]
                 consumo_mes = eto * kc * superficie / 1000
                 consumo_total += consumo_mes
+                resumen.append([mes, eto, kc, consumo_mes])
                 st.write(f"{mes}: {consumo_mes:.2f} m³")
             except Exception as e:
                 st.warning(f"No se pudo calcular para {mes}: {e}")
 
-        # Mostrar resultados
-        st.subheader("ðŸ“Š Resumen del consumo mensual")
-        st.dataframe(pd.DataFrame(resumen, columns=["Mes", "ETo (mm)", "Kc", "Consumo (mÂ³)"]))
-        st.success(f"ðŸ’§ Consumo total: {round(total, 2)} mÂ³")
+        st.subheader("📊 Resumen del consumo mensual")
+        st.dataframe(pd.DataFrame(resumen, columns=["Mes", "ETo (mm)", "Kc", "Consumo (m³)"]))
+        st.success(f"💧 Consumo total: {consumo_total:.2f} m³")
+
