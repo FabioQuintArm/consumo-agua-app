@@ -28,8 +28,9 @@ st.title("Calculo de consumo de agua en cultivos")
 cultivos_permanentes = ['Viñedo', 'Cítricos', 'Aguacate', 'Mango', 'Olivo', 'Platanera']
 cultivos_no_permanentes = ['Tomate', 'Papaya', 'Papa', 'Pimiento', 'Calabací­n', 'Otras hortalizas']
 
-months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-          'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+month_names = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+               'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+mes_a_num = {mes: i+1 for i, mes in enumerate(month_names)}
 
 month_columns = {
     'Enero': 'ETo01',
@@ -79,6 +80,9 @@ st.write("Municipio:", municipio)
 st.write("Polígono:", poligono)
 st.write("Parcela:", parcela)
 st.write("Recinto:", recinto)
+
+mes_inicio = st.selectbox("Mes de inicio", month_names)
+mes_fin = st.selectbox("Mes de fin", month_names)
 
 coincidencias_parcela = df[
     (df['provincia'].astype(str).str.strip().str.lower() == str(provincia).strip().lower()) &
