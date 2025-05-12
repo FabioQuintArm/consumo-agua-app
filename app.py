@@ -40,13 +40,6 @@ cultivos_kc = {
     'Platanera':  dict.fromkeys(months, 1.05) | {'Marzo': 1.1, 'Abril': 1.1, 'Mayo': 1.15, 'Junio': 1.15, 'Julio': 1.2, 'Agosto': 1.2, 'Septiembre': 1.15, 'Octubre': 1.1},
 }
 
-month_columns = {
-    'Enero': 'ETo01', 'Febrero': 'ETo02', 'Marzo': 'ETo03', 'Abril': 'ETo04',
-    'Mayo': 'ETo05', 'Junio': 'ETo06', 'Julio': 'ETo07', 'Agosto': 'ETo08',
-    'Septiembre': 'ETo09', 'Octubre': 'ETo10', 'Noviembre': 'ETo11', 'Diciembre': 'Eto12'
-}
-
-
 col1, col2 = st.columns(2)
 provincia = col1.text_input("provincia")
 municipio = col2.text_input("municipio")
