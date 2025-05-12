@@ -10,28 +10,28 @@ else:
 
 csv_path = os.path.join(base_path, 'Dataset.csv')
 
-# --- Cargar CSV sin cach� y con codificaci�n robusta ---
+# --- Cargar CSV sin caché y con codificación robusta ---
 try:
-    df = pd.read_csv(csv_path, sep=';', decimal=',', encoding='cp1252', errors='replace')
+    df = pd.read_csv(csv_path, sep=';', decimal=',', encoding='utf-8', errors='replace')
 except Exception as e:
     import streamlit as st
     st.error(f"Error al cargar el archivo: {e}")
     df = pd.DataFrame()
 
-# Aquí continúa tu código normalmente:
-# títulos, formularios, cálculos, etc.
-st.title("💧 Cálculo de Consumo de Agua en Cultivos")
+# AquÃ­ continÃºa tu cÃ³digo normalmente:
+# tÃ­tulos, formularios, cÃ¡lculos, etc.
+st.title("ðŸ’§ CÃ¡lculo de Consumo de Agua en Cultivos")
 
-# --- Configuración de datos de cultivo ---
-cultivos_permanentes = ['Viñedo', 'Cítricos', 'Aguacate', 'Mango', 'Olivo', 'Platanera']
-cultivos_no_permanentes = ['Tomate', 'Papaya', 'Papa', 'Pimiento', 'Calabacín', 'Otras hortalizas']
+# --- ConfiguraciÃ³n de datos de cultivo ---
+cultivos_permanentes = ['ViÃ±edo', 'CÃ­tricos', 'Aguacate', 'Mango', 'Olivo', 'Platanera']
+cultivos_no_permanentes = ['Tomate', 'Papaya', 'Papa', 'Pimiento', 'CalabacÃ­n', 'Otras hortalizas']
 
 months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
           'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
 
 cultivos_kc = {
-    'Vi�edo':     dict.fromkeys(months, 0.3) | {'Marzo': 0.5, 'Abril': 0.7, 'Mayo': 0.75, 'Junio': 0.75, 'Julio': 0.75, 'Agosto': 0.7, 'Septiembre': 0.5, 'Octubre': 0.4},
-    'C��tricos':   dict.fromkeys(months, 0.7) | {'Enero': 0.65, 'Febrero': 0.65, 'Noviembre': 0.65, 'Diciembre': 0.65},
+    'Viñedo':     dict.fromkeys(months, 0.3) | {'Marzo': 0.5, 'Abril': 0.7, 'Mayo': 0.75, 'Junio': 0.75, 'Julio': 0.75, 'Agosto': 0.7, 'Septiembre': 0.5, 'Octubre': 0.4},
+    'Cí­tricos':   dict.fromkeys(months, 0.7) | {'Enero': 0.65, 'Febrero': 0.65, 'Noviembre': 0.65, 'Diciembre': 0.65},
     'Aguacate':   dict.fromkeys(months, 0.7) | {'Marzo': 0.75, 'Abril': 0.8, 'Mayo': 0.8, 'Junio': 0.8, 'Julio': 0.75, 'Agosto': 0.75},
     'Mango':      dict.fromkeys(months, 0.5) | {'Marzo': 0.6, 'Abril': 0.65, 'Mayo': 0.7, 'Junio': 0.7, 'Julio': 0.7, 'Agosto': 0.65, 'Septiembre': 0.6, 'Octubre': 0.55},
     'Olivo':      dict.fromkeys(months, 0.3) | {'Marzo': 0.4, 'Abril': 0.5, 'Mayo': 0.55, 'Junio': 0.6, 'Julio': 0.55, 'Agosto': 0.5, 'Septiembre': 0.4, 'Octubre': 0.35},
@@ -48,10 +48,10 @@ month_columns = {
 col1, col2 = st.columns(2)
 provincia = col1.text_input("provincia")
 municipio = col2.text_input("municipio")
-poligono = col1.text_input("poli�gono")
+poligono = col1.text_input("poli­gono")
 parcela = col2.text_input("parcela")
 recinto = col1.text_input("recinto")
-superficie = col2.number_input("Superficie cultivada (m�)", min_value=1.0)
+superficie = col2.number_input("Superficie cultivada (m²)", min_value=1.0)
 
 cultivo_tipo = st.radio("Tipo de cultivo", ["Permanente", "No permanente"])
 if cultivo_tipo == "Permanente":
@@ -61,9 +61,9 @@ if cultivo_tipo == "Permanente":
 else:
     cultivo = st.selectbox("Selecciona el cultivo", cultivos_no_permanentes)
     mes_inicio = st.selectbox("Mes de inicio", months)
-    mes_fin = st.selectbox("Mes de finalización", months)
+    mes_fin = st.selectbox("Mes de finalizaciÃ³n", months)
 
-# --- Cálculo al presionar el botón ---
+# --- CÃ¡lculo al presionar el botÃ³n ---
 if st.button("Calcular consumo"):
     parcela_data = df[
         (df['provincia'] == provincia) &
@@ -76,7 +76,7 @@ if st.button("Calcular consumo"):
     if parcela_data.empty:
         st.error("Parcela no encontrada en el dataset.")
     else:
-        # Definir meses según tipo de cultivo
+        # Definir meses segÃºn tipo de cultivo
         if cultivo_tipo == "Permanente":
             selected_months = months
             fase_kc = cultivos_kc[cultivo]
@@ -100,7 +100,7 @@ if st.button("Calcular consumo"):
                 else:
                     fase_kc[mes] = 1.05
 
-        # Cálculo del consumo mensual
+        # CÃ¡lculo del consumo mensual
         resumen = []
         total = 0
 
@@ -116,6 +116,6 @@ if st.button("Calcular consumo"):
                 st.warning(f"No se pudo calcular para {mes}: {e}")
 
         # Mostrar resultados
-        st.subheader("📊 Resumen del consumo mensual")
-        st.dataframe(pd.DataFrame(resumen, columns=["Mes", "ETo (mm)", "Kc", "Consumo (m³)"]))
-        st.success(f"💧 Consumo total: {round(total, 2)} m³")
+        st.subheader("ðŸ“Š Resumen del consumo mensual")
+        st.dataframe(pd.DataFrame(resumen, columns=["Mes", "ETo (mm)", "Kc", "Consumo (mÂ³)"]))
+        st.success(f"ðŸ’§ Consumo total: {round(total, 2)} mÂ³")
