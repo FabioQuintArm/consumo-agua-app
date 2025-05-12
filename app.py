@@ -18,12 +18,7 @@ except Exception as e:
     import streamlit as st
     st.error(f"Error al cargar el archivo: {e}")
     df = pd.DataFrame()
-
-st.write("Columnas disponibles:", df.columns.tolist())
-
-st.title("Cálculo de consumo de agua en cultivos")
-
-
+    
 st.title("Calculo de consumo de agua en cultivos")
 
 cultivos_permanentes = ['Viñedo', 'Cítricos', 'Aguacate', 'Mango', 'Olivo', 'Platanera']
