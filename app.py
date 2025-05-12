@@ -31,9 +31,6 @@ cultivos_no_permanentes = ['Tomate', 'Papaya', 'Papa', 'Pimiento', 'Calabací­n
 months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
           'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
 
-mes_inicio_num = mes_a_num[mes_inicio]
-mes_fin_num = mes_a_num[mes_fin]
-
 month_columns = {
     'Enero': 'ETo01',
     'Febrero': 'ETo02',
