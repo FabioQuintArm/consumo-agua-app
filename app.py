@@ -133,19 +133,17 @@ if st.button("Calcular consumo"):
         resumen = []
         total = 0
         
-if not parcela_data.empty:
-    consumo_total = 0
-    for mes in month_names[mes_inicio - 1:mes_fin]:
-        columna = month_columns[mes]
-        try:
-            eto = float(parcela_data[columna].values[0])
-            consumo_mes = eto * kc * superficie / 1000
-            consumo_total += consumo_mes
-            st.write(f"{mes}: {consumo_mes:.2f} m³")
-        except Exception as e:
-            st.warning(f"No se pudo calcular para {mes}: {e}")
-
-
+    if not parcela_data.empty:
+        consumo_total = 0
+        for mes in month_names[mes_inicio - 1:mes_fin]:
+            columna = month_columns[mes]
+            try:
+                eto = float(parcela_data[columna].values[0])
+                consumo_mes = eto * kc * superficie / 1000
+                consumo_total += consumo_mes
+                st.write(f"{mes}: {consumo_mes:.2f} m³")
+            except Exception as e:
+                st.warning(f"No se pudo calcular para {mes}: {e}")
 
         # Mostrar resultados
         st.subheader("ðŸ“Š Resumen del consumo mensual")
