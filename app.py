@@ -64,11 +64,11 @@ else:
 # --- Cálculo al presionar el botón ---
 if st.button("Calcular consumo"):
     parcela_data = df[
-        (df['provincia'] == provincia) &
-        (df['municipio'] == municipio) &
-        (df['poligono'] == poligono) &
-        (df['parcela'] == parcela) &
-        (df['recinto'] == recinto)
+        (df['provincia'].astype(str).str.strip().str.lower() == str(provincia).strip().lower()) &
+        (df['municipio'].astype(str).str.strip().str.lower() == str(municipio).strip().lower()) &
+        (df['poligono'].astype(str).str.strip() == str(poligono).strip()) &
+        (df['parcela'].astype(str).str.strip() == str(parcela).strip()) &
+        (df['recinto'].astype(str).str.strip() == str(recinto).strip())
     ]
 
     if parcela_data.empty:
