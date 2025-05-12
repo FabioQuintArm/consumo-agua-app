@@ -18,7 +18,11 @@ try:
 except Exception as e:
     st.error(f"Error al cargar el archivo: {e}")
     df = pd.DataFrame()
-    
+
+st.subheader("📋 Primeras filas del dataset")
+st.write(df.head())
+st.write("Columnas detectadas:", df.columns.tolist())
+
 st.title("Calculo de consumo de agua en cultivos")
 
 cultivos_permanentes = ['Viñedo', 'Cítricos', 'Aguacate', 'Mango', 'Olivo', 'Platanera']
@@ -60,6 +64,13 @@ else:
     cultivo = st.selectbox("Selecciona el cultivo", cultivos_no_permanentes)
     mes_inicio = st.selectbox("Mes de inicio", months)
     mes_fin = st.selectbox("Mes de finalización", months)
+
+st.subheader("🔍 Valores ingresados")
+st.write("Provincia:", provincia)
+st.write("Municipio:", municipio)
+st.write("Polígono:", poligono)
+st.write("Parcela:", parcela)
+st.write("Recinto:", recinto)
 
 # --- Cálculo al presionar el botón ---
 if st.button("Calcular consumo"):
