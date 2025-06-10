@@ -12,7 +12,7 @@ except Exception as e:
     st.error(f"Error al cargar el archivo: {e}")
     df = pd.DataFrame()
 
-st.title("Cálculo de Consumo de Agua en Cultivos")
+st.title("Cálculo de consumo de agua en cultivos")
 
 # Entradas
 st.header("📋 Formulario de entrada")
