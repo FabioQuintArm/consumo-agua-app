@@ -62,7 +62,7 @@ cultivos_kc = {
 }
 
 cultivo = st.selectbox("Cultivo", list(cultivos_kc.keys()) if cultivo_tipo == "Permanente"
-                       else ['Tomate', 'Papa', 'Pimiento', 'Calabacín', 'Otras hortalizas'])
+                       else ['Tomate', 'Papa', 'Pimiento', 'Calabacín'])
 
 # Botón
 if st.button("Calcular consumo"):
